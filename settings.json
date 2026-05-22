@@ -1,0 +1,7 @@
+{
+  "title": "Smolblog",
+  "footer": "Built with Smolblog — a tiny Go + HTMX static site generator.",
+  "theme": "default",
+  "about_content": "Smolblog is a lightweight static site generator built with Go. It uses Markdown for content, HTMX for the admin UI, and generates flat HTML that you can deploy anywhere — no database, no server runtime.\n\n### Why Smolblog?\n\n- **Simple** — write in Markdown, get static HTML\n- **Fast** — compiled Go, sub-second builds\n- **Self-contained** — one binary, no dependencies\n- **Fun** — built to learn and to share",
+  "home_content": "# Welcome to Smolblog\n\nThis is your corner of the web.\n\nWrite posts in Markdown, manage everything from the admin panel, and publish to GitHub Pages with one click.\n\nCheck out the [blog](/blog/) for the latest posts."
+}

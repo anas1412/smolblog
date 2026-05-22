@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin</title>
+    {{template "shared-head"}}
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    <style>
+        .EasyMDEContainer { display: block !important; }
+        .editor-toolbar { border-color: #e4e4e7 !important; border-radius: 0.5rem 0.5rem 0 0 !important; background: #fafafa; }
+        .editor-toolbar button { color: #71717a !important; }
+        .editor-toolbar button:hover { background: #f4f4f5 !important; border-color: #d4d4d8 !important; }
+        .CodeMirror { border-color: #e4e4e7 !important; border-radius: 0 0 0.5rem 0.5rem !important; min-height: 200px; }
+        .CodeMirror-focused { border-color: #10b981 !important; }
+        .editor-preview { background: #fff; }
+        .editor-preview table { border-collapse: collapse; width: 100%; }
+        .editor-preview th, .editor-preview td { border: 1px solid #d4d4d8; padding: 6px 10px; text-align: left; }
+        .editor-preview th { background: #f4f4f5; }
+        .editor-preview code { background: #f4f4f5; padding: 2px 6px; border-radius: 3px; }
+        .editor-preview pre code { background: #18181b; color: #f4f4f5; padding: 12px; display: block; border-radius: 6px; }
+    </style>
+</head>
+<body class="bg-white text-zinc-900 antialiased font-sans min-h-screen">
+
+    <!-- ============================================================== -->
+    <!-- Admin top bar                                                  -->
+    <!-- ============================================================== -->
+    <nav class="border-b border-zinc-100 bg-white/80 backdrop-blur sticky top-0 z-10">
+        <div class="max-w-5xl mx-auto px-6 h-14 flex items-center gap-6 text-sm">
+            <span class="font-bold text-emerald-600">Admin</span>
+
+            <a href="/admin"
+               class="transition{{if eq .View "list"}} text-zinc-900 font-semibold{{else}} text-zinc-400 hover:text-zinc-900{{end}}">Posts</a>
+            <a href="/admin/settings"
+               class="transition{{if eq .View "settings"}} text-zinc-900 font-semibold{{else}} text-zinc-400 hover:text-zinc-900{{end}}">Settings</a>
+            <a href="/admin/themes"
+               class="transition{{if eq .View "themes"}} text-zinc-900 font-semibold{{else}} text-zinc-400 hover:text-zinc-900{{end}}">Themes</a>
+
+            <div class="ml-auto flex items-center gap-2">
+                <button hx-post="/admin/build" hx-target="#status-bar"
+                        class="text-xs bg-zinc-100 hover:bg-zinc-200 text-zinc-600 font-medium px-3 py-1.5 rounded transition cursor-pointer">
+                    Build
+                </button>
+                <button hx-post="/admin/publish" hx-target="#status-bar"
+                        class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium px-3 py-1.5 rounded transition cursor-pointer">
+                    Publish
+                </button>
+                <a href="/" target="_blank"
+                   class="text-xs text-zinc-400 hover:text-zinc-900 transition ml-2">View Site &nearr;</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="status-bar" class="max-w-5xl mx-auto px-6"></div>
+
+    <!-- ============================================================== -->
+    <!-- LIST VIEW                                                      -->
+    <!-- ============================================================== -->
+    {{if eq .View "list"}}
+    <div class="max-w-4xl mx-auto px-6 py-10">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Posts</h1>
+            <a href="/admin/new"
+               class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded transition">
+                + New Post
+            </a>
+        </div>
+
+        {{if .Posts}}
+        <div class="border border-zinc-200 rounded-lg overflow-hidden">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-zinc-50 border-b border-zinc-200 text-left text-xs uppercase tracking-wider text-zinc-500">
+                        <th class="px-5 py-3 font-medium">Title</th>
+                        <th class="px-5 py-3 font-medium w-36">Date</th>
+                        <th class="px-5 py-3 font-medium w-28">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="post-list">
+                    {{template "post-list" .Posts}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <div class="text-center py-20 border border-dashed border-zinc-200 rounded-lg">
+            <p class="text-zinc-400 mb-4">No posts yet.</p>
+            <a href="/admin/new"
+               class="text-emerald-600 hover:text-emerald-700 font-medium">Write your first post &rarr;</a>
+        </div>
+        {{end}}
+    </div>
+    {{end}}
+
+    <!-- ============================================================== -->
+    <!-- NEW / EDIT VIEW                                                -->
+    <!-- ============================================================== -->
+    {{if or (eq .View "new") (eq .View "edit")}}
+    <div class="max-w-3xl mx-auto px-6 py-10">
+        <a href="/admin" class="text-sm text-zinc-400 hover:text-zinc-900 transition">&larr; Back to Posts</a>
+
+        <h1 class="text-2xl font-bold tracking-tight text-zinc-900 mt-4 mb-8">
+            {{if .Editing}}Edit Post{{else}}New Post{{end}}
+        </h1>
+
+        <form action="/admin/save" method="POST"
+              class="space-y-5 bg-zinc-50 p-6 rounded-lg border border-zinc-200">
+
+            {{if .Editing}}
+            <input type="hidden" name="original_slug" value="{{.Editing.Slug}}">
+            {{end}}
+
+            <div>
+                <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Title</label>
+                <input type="text" name="title" required
+                       value="{{if .Editing}}{{.Editing.Title}}{{end}}"
+                       placeholder="e.g., Designing Stateless Systems"
+                       class="w-full bg-white border border-zinc-300 rounded p-2 focus:outline-none focus:border-emerald-500 text-zinc-900 placeholder-zinc-400">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Slug</label>
+                    <input type="text" name="slug" required
+                           value="{{if .Editing}}{{.Editing.Slug}}{{end}}"
+                           placeholder="e.g., designing-stateless-systems"
+                           {{if .Editing}}readonly
+                           class="w-full bg-zinc-100 border border-zinc-200 rounded p-2 text-zinc-500 cursor-not-allowed"{{else}}
+                           class="w-full bg-white border border-zinc-300 rounded p-2 focus:outline-none focus:border-emerald-500 text-zinc-900 placeholder-zinc-400"{{end}}>
+                    {{if .Editing}}<p class="text-xs text-zinc-400 mt-1">Slug can't be changed after creation.</p>{{end}}
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Date</label>
+                    <input type="date" name="date" required
+                           value="{{if .Editing}}{{.Editing.Date.Format "2006-01-02"}}{{else}}{{end}}"
+                           class="w-full bg-white border border-zinc-300 rounded p-2 focus:outline-none focus:border-emerald-500 text-zinc-900">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Tags (comma-separated)</label>
+                <input type="text" name="tags"
+                       value="{{if .Editing}}{{joinTags .Editing.Tags}}{{end}}"
+                       placeholder="e.g., go, tutorial, web"
+                       class="w-full bg-white border border-zinc-300 rounded p-2 focus:outline-none focus:border-emerald-500 text-zinc-900 placeholder-zinc-400">
+            </div>
+
+            <div>
+                <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Markdown Body</label>
+                <textarea name="content" required rows="12"
+                          placeholder="Write standard markdown content here..."
+                          class="md-editor w-full bg-white border border-zinc-300 rounded p-2 font-mono text-sm focus:outline-none focus:border-emerald-500 text-zinc-900 placeholder-zinc-400">{{if .Editing}}{{.Editing.Body}}{{end}}</textarea>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="submit"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-2 rounded transition cursor-pointer">
+                    {{if .Editing}}Update Post{{else}}Save Post{{end}}
+                </button>
+                <a href="/admin" class="text-sm text-zinc-400 hover:text-zinc-900 transition">Cancel</a>
+            </div>
+        </form>
+    </div>
+    {{end}}
+
+    <!-- ============================================================== -->
+    <!-- SETTINGS VIEW                                                  -->
+    <!-- ============================================================== -->
+    {{if eq .View "settings"}}
+    <div class="max-w-2xl mx-auto px-6 py-10">
+        <h1 class="text-2xl font-bold tracking-tight text-zinc-900 mb-8">Settings</h1>
+        <form action="/admin/settings" method="POST"
+              class="space-y-6 bg-zinc-50 p-6 rounded-lg border border-zinc-200">
+
+            <div>
+                <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Site Title</label>
+                <input type="text" name="title" value="{{.Settings.Title}}" required
+                       class="w-full bg-white border border-zinc-300 rounded p-2 focus:outline-none focus:border-emerald-500 text-zinc-900">
+                <p class="text-xs text-zinc-400 mt-1">Shown in the navbar and browser tab titles.</p>
+            </div>
+
+            <hr class="border-zinc-200">
+
+            <div>
+                <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Footer Text</label>
+                <input type="text" name="footer" value="{{.Settings.Footer}}"
+                       class="w-full bg-white border border-zinc-300 rounded p-2 focus:outline-none focus:border-emerald-500 text-zinc-900">
+                <p class="text-xs text-zinc-400 mt-1">Shown at the bottom of every page.</p>
+            </div>
+
+            <hr class="border-zinc-200">
+
+            <div>
+                <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Home Page Content</label>
+                <p class="text-xs text-zinc-400 mb-2">Markdown for the home page.</p>
+                <textarea name="home_content" rows="6"
+                          class="md-editor w-full bg-white border border-zinc-300 rounded p-2 font-mono text-sm focus:outline-none focus:border-emerald-500 text-zinc-900">{{.Settings.HomeContent}}</textarea>
+            </div>
+
+            <hr class="border-zinc-200">
+
+            <div>
+                <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">About Page Content</label>
+                <p class="text-xs text-zinc-400 mb-2">Markdown for the about page.</p>
+                <textarea name="about_content" rows="8"
+                          class="md-editor w-full bg-white border border-zinc-300 rounded p-2 font-mono text-sm focus:outline-none focus:border-emerald-500 text-zinc-900">{{.Settings.AboutContent}}</textarea>
+            </div>
+
+            <button type="submit"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-2 rounded transition cursor-pointer">
+                Save Settings
+            </button>
+        </form>
+    </div>
+    {{end}}
+
+    <!-- ============================================================== -->
+    <!-- THEMES VIEW                                                    -->
+    <!-- ============================================================== -->
+    {{if eq .View "themes"}}
+    <div class="max-w-4xl mx-auto px-6 py-10">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Themes</h1>
+        </div>
+
+        {{if .ThemeError}}
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            {{.ThemeError}}
+        </div>
+        {{end}}
+
+        <!-- Upload form -->
+        <div class="mb-10 bg-zinc-50 border border-zinc-200 rounded-lg p-6">
+            <h2 class="text-sm font-semibold text-zinc-700 mb-3">Install New Theme</h2>
+            <form action="/admin/themes/upload" method="POST" enctype="multipart/form-data"
+                  class="flex items-end gap-4">
+                <div class="flex-1">
+                    <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Theme ZIP</label>
+                    <input type="file" name="theme" accept=".zip" required
+                           class="w-full bg-white border border-zinc-300 rounded p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 text-zinc-600">
+                    <p class="text-xs text-zinc-400 mt-1">Upload a .zip containing theme.json, templates/, and optional static/.</p>
+                </div>
+                <button type="submit"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2 rounded transition cursor-pointer whitespace-nowrap">
+                    Upload &amp; Install
+                </button>
+            </form>
+        </div>
+
+        <!-- Installed themes grid -->
+        {{if .Themes}}
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {{range .Themes}}
+            <div class="border border-zinc-200 rounded-lg p-5 flex flex-col {{if eq .Name $.ActiveTheme}}ring-2 ring-emerald-500{{end}}">
+                <div class="flex items-start justify-between mb-3">
+                    <div>
+                        <h3 class="font-semibold text-zinc-900">{{.Name}}</h3>
+                        <p class="text-xs text-zinc-400">v{{.Version}}{{if .Author}} &middot; {{.Author}}{{end}}</p>
+                    </div>
+                    {{if eq .Name $.ActiveTheme}}
+                    <span class="text-xs bg-emerald-50 text-emerald-700 font-medium px-2 py-0.5 rounded">Active</span>
+                    {{end}}
+                </div>
+                {{if .Description}}
+                <p class="text-sm text-zinc-500 mb-4 flex-1">{{.Description}}</p>
+                {{else}}
+                <p class="text-sm text-zinc-300 mb-4 flex-1 italic">No description</p>
+                {{end}}
+                <div class="flex items-center gap-2 pt-3 border-t border-zinc-100">
+                    {{if ne .Name $.ActiveTheme}}
+                    <form action="/admin/themes/activate" method="POST" class="inline">
+                        <input type="hidden" name="theme" value="{{.Name}}">
+                        <button type="submit"
+                                class="text-xs bg-zinc-100 hover:bg-zinc-200 text-zinc-600 font-medium px-3 py-1.5 rounded transition cursor-pointer">
+                            Activate
+                        </button>
+                    </form>
+                    {{end}}
+                    <a href="/admin/themes/export?name={{.Name}}"
+                       class="text-xs bg-zinc-100 hover:bg-zinc-200 text-zinc-600 font-medium px-3 py-1.5 rounded transition inline-block">
+                        Export
+                    </a>
+                    {{if and (ne .Name "default") (ne .Name $.ActiveTheme)}}
+                    <form action="/admin/themes/delete" method="POST" class="inline"
+                          onsubmit="return confirm('Delete theme &quot;{{.Name}}&quot;?')">
+                        <input type="hidden" name="theme" value="{{.Name}}">
+                        <button type="submit"
+                                class="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-medium px-3 py-1.5 rounded transition cursor-pointer">
+                            Delete
+                        </button>
+                    </form>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="text-center py-16 border border-dashed border-zinc-200 rounded-lg">
+            <p class="text-zinc-400 mb-2">No themes installed yet.</p>
+            <p class="text-xs text-zinc-300">Upload a theme zip above to get started.</p>
+        </div>
+        {{end}}
+    </div>
+    {{end}}
+
+    <!-- ============================================================== -->
+    <!-- EasyMDE initialization                                         -->
+    <!-- ============================================================== -->
+    <script>
+    (function() {
+        function initEditors() {
+            document.querySelectorAll('.md-editor').forEach(function(ta) {
+                if (ta._easyMDE) return;
+                ta._easyMDE = new EasyMDE({
+                    element: ta,
+                    spellChecker: false,
+                    status: false,
+                    toolbar: ['bold', 'italic', 'heading', '|', 'code', 'quote',
+                              'unordered-list', 'ordered-list', '|', 'link', 'image', 'table', '|',
+                              'preview', 'guide']
+                });
+            });
+        }
+        function syncEditors() {
+            document.querySelectorAll('.md-editor').forEach(function(ta) {
+                if (ta._easyMDE) ta.value = ta._easyMDE.value();
+            });
+        }
+        document.addEventListener('DOMContentLoaded', initEditors);
+        document.body.addEventListener('htmx:afterSettle', function() { setTimeout(initEditors, 50); });
+        document.body.addEventListener('htmx:beforeRequest', syncEditors);
+        // For settings form with htmx
+        document.body.addEventListener('htmx:beforeSend', syncEditors);
+    })();
+    </script>
+</body>
+</html>
+
+{{define "post-list"}}
+    {{range .}}
+    <tr class="border-b border-zinc-100 hover:bg-zinc-50 transition">
+        <td class="px-5 py-3">
+            <a href="/admin/edit?slug={{.Slug}}" class="text-zinc-900 hover:text-emerald-600 font-medium">{{.Title}}</a>
+            <div class="text-xs text-zinc-400 font-mono mt-0.5">{{.Slug}}</div>
+        </td>
+        <td class="px-5 py-3 text-zinc-500 text-sm">{{.Date}}</td>
+        <td class="px-5 py-3">
+            <div class="flex items-center gap-3 text-xs">
+                <a href="/admin/edit?slug={{.Slug}}"
+                   class="text-zinc-400 hover:text-emerald-600 transition">edit</a>
+                <form action="/admin/delete" method="POST"
+                      onsubmit="return confirm('Delete &#39;{{.Slug}}&#39;?')" class="inline">
+                    <input type="hidden" name="slug" value="{{.Slug}}">
+                    <button type="submit"
+                            class="text-zinc-400 hover:text-red-600 transition cursor-pointer bg-transparent border-0 p-0">delete</button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    {{end}}
+{{end}}

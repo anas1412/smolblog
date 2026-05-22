@@ -1,0 +1,14 @@
+# Binary
+smolblog
+cms
+
+# Built site
+dist/
+
+# Temp / OS files
+.tmp/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
