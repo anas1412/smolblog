@@ -1,5 +1,13 @@
 # Smolblog
 
+<p>
+  <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white" alt="Go version">
+  <img src="https://img.shields.io/badge/HTMX-2.0-3366CC?logo=htmx&logoColor=white" alt="HTMX">
+  <img src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
+  <img src="https://img.shields.io/github/license/anas1412/smolblog" alt="License">
+  <img src="https://img.shields.io/github/actions/workflow/status/anas1412/smolblog/deploy.yml?logo=github&label=deploy" alt="GitHub Actions">
+</p>
+
 A lightweight static site generator built with Go. Write content in Markdown with YAML frontmatter, generate flat HTML, and deploy to GitHub Pages — no database or server needed.
 
 Built with [Goldmark](https://github.com/yuin/goldmark) for Markdown rendering, [HTMX](https://htmx.org/) for the admin UI, and [Tailwind CSS](https://tailwindcss.com/) for styling.
@@ -12,6 +20,9 @@ Built with [Goldmark](https://github.com/yuin/goldmark) for Markdown rendering, 
 - **Static pages** — Home, Blog, About, Contact with shared navbar
 - **Blog listing** — posts sorted by date, newest first
 - **Admin panel** — web UI at `/admin` for composing, editing, and managing posts
+- **One-click Build** — rebuilds the static site from the admin panel
+- **One-click Publish** — commits and pushes to GitHub from the admin panel
+- **Live preview** — view your site at any time from the admin
 - **Theme system** — install, switch, and export themes from the admin UI (no code needed)
 - **CLI build** — `./smolblog build` generates the complete site into `dist/`
 - **GitHub Actions** — auto-builds and deploys to Pages on push
