@@ -19,9 +19,9 @@
         .editor-preview th { background: #f4f4f5; }
         .editor-preview code { background: #f4f4f5; padding: 2px 6px; border-radius: 3px; }
         .editor-preview pre code { background: #18181b; color: #f4f4f5; padding: 12px; display: block; border-radius: 6px; }
-        .htmx-indicator { opacity: 0; transition: opacity 0.2s; }
-        .htmx-request .htmx-indicator { opacity: 1; }
-        .htmx-request.htmx-indicator { opacity: 1; }
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline; }
+        .htmx-request.htmx-indicator { display: inline; }
         .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 4px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         button:disabled { opacity: 0.5; cursor: wait !important; }
