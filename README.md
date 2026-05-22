@@ -39,6 +39,8 @@ git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
 
 ### 2. Run locally
 
+Requires [Go 1.26+](https://go.dev/dl/).
+
 ```bash
 # Build the binary
 go build -o smolblog .
@@ -126,6 +128,15 @@ Your site will be live at `https://YOUR_USERNAME.github.io/YOUR_REPO/`.
 The base URL is **auto-detected** in the workflow — no manual config needed. If your repo is `yourname/your-blog`, it deploys to `/your-blog/`. If it's a user site (`yourname/yourname.github.io`), it deploys to the root.
 
 You can also trigger a manual deploy from the **Actions** tab → **Build and Deploy to GitHub Pages** → **Run workflow**.
+
+### Publish Button (Admin)
+
+The admin's **Publish** button runs `git commit && git push` from the server. For this to work, you need:
+
+- **SSH key** added to your GitHub account — [github.com/settings/keys](https://github.com/settings/keys)
+- **Git remote** set to SSH: `git remote set-url origin git@github.com:YOUR_USER/YOUR_REPO.git`
+
+If you haven't set this up, the button will show a helpful error message with next steps.
 
 ---
 

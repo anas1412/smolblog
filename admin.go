@@ -106,6 +106,35 @@ Fix it:
 
 Then click Publish again.`
 	}
+	if strings.Contains(outputLower, "permission denied") || strings.Contains(outputLower, "publickey") {
+		return `Git isn't authenticated.
+
+You need to set up SSH access to GitHub:
+
+1. Generate an SSH key (if you don't have one):
+   ssh-keygen -t ed25519 -C "your@email.com"
+
+2. Add it to your GitHub account:
+   https://github.com/settings/keys
+
+3. Test the connection:
+   ssh -T git@github.com
+
+Then click Publish again.`
+	}
+	if strings.Contains(outputLower, "could not read username") || strings.Contains(outputLower, "authentication failed") || strings.Contains(outputLower, "could not read password") {
+		return `Git isn't authenticated.
+
+You can fix this by using SSH instead of HTTPS:
+
+  git remote set-url origin git@github.com:YOUR_USER/YOUR_REPO.git
+
+Or configure git credentials:
+  git config --global user.name "Your Name"
+  git config --global user.email "your@email.com"
+
+Then click Publish again.`
+	}
 	return fmt.Sprintf("Something went wrong with Git:\n%s\n\nIf you're stuck, try pushing manually.", strings.TrimSpace(output))
 }
 

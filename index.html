@@ -55,6 +55,7 @@
                 <button hx-post="/admin/publish" hx-target="#status-bar"
                         hx-indicator="#publish-indicator"
                         hx-disabled-elt="#publish-btn"
+                        title="Requires git + SSH key set up"
                         class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium px-3 py-1.5 rounded transition cursor-pointer"
                         id="publish-btn">
                     <span id="publish-indicator" class="htmx-indicator"><span class="spinner"></span></span>
@@ -247,15 +248,15 @@
         <div class="mb-10 bg-zinc-50 border border-zinc-200 rounded-lg p-6">
             <h2 class="text-sm font-semibold text-zinc-700 mb-3">Install New Theme</h2>
             <form action="/admin/themes/upload" method="POST" enctype="multipart/form-data"
-                  class="flex items-end gap-4">
+                  class="flex items-start gap-4">
                 <div class="flex-1">
                     <label class="block text-xs uppercase tracking-wider text-zinc-500 mb-1">Theme ZIP</label>
                     <input type="file" name="theme" accept=".zip" required
-                           class="w-full bg-white border border-zinc-300 rounded p-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 text-zinc-600">
+                           class="w-full bg-white border border-zinc-300 rounded p-2 text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 text-zinc-600">
                     <p class="text-xs text-zinc-400 mt-1">Upload a .zip containing theme.json, templates/, and optional static/.</p>
                 </div>
                 <button type="submit"
-                        class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2 rounded transition cursor-pointer whitespace-nowrap">
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-5 py-2 rounded transition cursor-pointer whitespace-nowrap mt-6">
                     Upload &amp; Install
                 </button>
             </form>
