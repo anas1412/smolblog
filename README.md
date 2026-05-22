@@ -27,17 +27,14 @@ Built with [Goldmark](https://github.com/yuin/goldmark) for Markdown rendering, 
 ### Setup
 
 ```bash
-# Clone the repo
-git clone https://github.com/anas1412/smolblog.git
-cd smolblog
-
 # Build the binary
 go build -o smolblog .
 
-# Start the admin + preview server
+# Build the site + start the admin panel and preview server
 ./smolblog
 ```
 
+The server auto-builds the site on startup, so you're ready to go immediately.
 Open [http://localhost:8080/admin](http://localhost:8080/admin) to access the admin panel.
 
 The preview of your built site is at [http://localhost:8080/](http://localhost:8080/).
@@ -223,6 +220,6 @@ my-theme/
 | Command | What it does |
 |---|---|
 | `go build -o smolblog .` | Build the binary |
-| `./smolblog` | Start HTTP server (admin + preview) |
-| `./smolblog build` | Generate static site into `dist/` |
+| `./smolblog` | Build site + start server (admin + preview) |
+| `./smolblog build` | Build site only (for CI/CD) |
 | `./smolblog help` | Show usage |
