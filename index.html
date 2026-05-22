@@ -19,6 +19,12 @@
         .editor-preview th { background: #f4f4f5; }
         .editor-preview code { background: #f4f4f5; padding: 2px 6px; border-radius: 3px; }
         .editor-preview pre code { background: #18181b; color: #f4f4f5; padding: 12px; display: block; border-radius: 6px; }
+        .htmx-indicator { opacity: 0; transition: opacity 0.2s; }
+        .htmx-request .htmx-indicator { opacity: 1; }
+        .htmx-request.htmx-indicator { opacity: 1; }
+        .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 4px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        button:disabled { opacity: 0.5; cursor: wait !important; }
     </style>
 </head>
 <body class="bg-white text-zinc-900 antialiased font-sans min-h-screen">
@@ -39,11 +45,19 @@
 
             <div class="ml-auto flex items-center gap-2">
                 <button hx-post="/admin/build" hx-target="#status-bar"
-                        class="text-xs bg-zinc-100 hover:bg-zinc-200 text-zinc-600 font-medium px-3 py-1.5 rounded transition cursor-pointer">
+                        hx-indicator="#build-indicator"
+                        hx-disabled-elt="#build-btn"
+                        class="text-xs bg-zinc-100 hover:bg-zinc-200 text-zinc-600 font-medium px-3 py-1.5 rounded transition cursor-pointer"
+                        id="build-btn">
+                    <span id="build-indicator" class="htmx-indicator"><span class="spinner"></span></span>
                     Build
                 </button>
                 <button hx-post="/admin/publish" hx-target="#status-bar"
-                        class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium px-3 py-1.5 rounded transition cursor-pointer">
+                        hx-indicator="#publish-indicator"
+                        hx-disabled-elt="#publish-btn"
+                        class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium px-3 py-1.5 rounded transition cursor-pointer"
+                        id="publish-btn">
+                    <span id="publish-indicator" class="htmx-indicator"><span class="spinner"></span></span>
                     Publish
                 </button>
                 <a href="/" target="_blank"
