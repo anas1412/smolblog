@@ -18,13 +18,26 @@ Built with [Goldmark](https://github.com/yuin/goldmark) for Markdown rendering, 
 
 ---
 
-## Quick Start (Local)
+## Quick Start
 
-### Prerequisites
+### 1. Get the code
 
-- [Go 1.26+](https://go.dev/dl/)
+**Fork** the repo (recommended) — click the "Fork" button on GitHub, then:
 
-### Setup
+```bash
+git clone https://github.com/YOUR_USERNAME/smolblog.git
+cd smolblog
+```
+
+Or clone and set up fresh:
+
+```bash
+git clone https://github.com/anas1412/smolblog.git
+cd smolblog
+git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+```
+
+### 2. Run locally
 
 ```bash
 # Build the binary
@@ -34,14 +47,12 @@ go build -o smolblog .
 ./smolblog
 ```
 
-The server auto-builds the site on startup, so you're ready to go immediately.
 Open [http://localhost:8080/admin](http://localhost:8080/admin) to access the admin panel.
+Your site preview is at [http://localhost:8080/](http://localhost:8080/).
 
-The preview of your built site is at [http://localhost:8080/](http://localhost:8080/).
+### 3. Write a Post
 
-### Write a Post
-
-Open the admin at [http://localhost:8080/admin](http://localhost:8080/admin), fill in the form (title, slug, date, tags, markdown body), and click **Save Post**.
+In the admin panel, fill in the form (title, slug, date, tags, markdown body) and click **Save Post**.
 
 Or create a Markdown file manually in `content/posts/`:
 
@@ -60,20 +71,20 @@ tags:
 This is the body of my post written in **Markdown**.
 ```
 
-### Build the Site
+### 4. Build the Site
 
 ```bash
 ./smolblog build
 ```
 
-This generates the complete static site into the `dist/` directory:
+This generates the complete static site into `dist/`:
 
 ```
 dist/
 ├── index.html            # Home page
 ├── blog/
 │   ├── index.html        # Blog listing
-│   ├── hello-world.html  # Individual post
+│   ├── hello-world.html  # Post
 │   └── ...
 ├── about/
 │   └── index.html        # About page
@@ -87,14 +98,11 @@ dist/
 
 ### 1. Push to GitHub
 
-Create a repository on GitHub and push your code:
-
 ```bash
-git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/anas1412/smolblog.git
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
 git push -u origin main
 ```
 
@@ -102,19 +110,20 @@ git push -u origin main
 
 1. Go to your repo on GitHub → **Settings** → **Pages**
 2. Under **Source**, select **GitHub Actions**
-3. That's it — the included `.github/workflows/deploy.yml` handles the rest
+3. That's it — the included `.github/workflows/deploy.yml` handles everything
 
 ### 3. Every Push Deploys
 
-Every push to `main` triggers the workflow:
+Every push to `main` triggers the workflow, which:
 
-1. Checks out the code
-2. Builds the Go binary
-3. Runs `./smolblog build` to generate the site
-4. Uploads `dist/` as a Pages artifact
-5. Deploys it
+1. Builds the Go binary
+2. Runs `./smolblog build` to generate the site
+3. Uploads `dist/` as a Pages artifact
+4. Deploys it
 
-Your site will be live at `https://anas1412.github.io/smolblog/`.
+Your site will be live at `https://YOUR_USERNAME.github.io/YOUR_REPO/`.
+
+The base URL is **auto-detected** in the workflow — no manual config needed. If your repo is `yourname/your-blog`, it deploys to `/your-blog/`. If it's a user site (`yourname/yourname.github.io`), it deploys to the root.
 
 You can also trigger a manual deploy from the **Actions** tab → **Build and Deploy to GitHub Pages** → **Run workflow**.
 

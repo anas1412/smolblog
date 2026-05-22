@@ -30,10 +30,17 @@ jobs:
       - name: Build the SSG binary
         run: go build -o smolblog .
 
+      - name: Set base URL for GitHub Pages
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          if [[ "$REPO_NAME" == *.github.io ]]; then
+            echo "SMOLBLOG_BASE_URL=" >> $GITHUB_ENV
+          else
+            echo "SMOLBLOG_BASE_URL=/$REPO_NAME" >> $GITHUB_ENV
+          fi
+
       - name: Generate static site
         run: ./smolblog build
-        env:
-          SMOLBLOG_BASE_URL: /smolblog
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
