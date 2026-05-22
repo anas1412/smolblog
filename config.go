@@ -10,15 +10,17 @@ type SiteConfig struct {
 	Title        string `json:"title"`
 	Footer       string `json:"footer"`
 	Theme        string `json:"theme"`
+	BaseURL      string `json:"base_url"`
 	AboutContent string `json:"about_content"`
 	HomeContent  string `json:"home_content"`
 }
 
 func defaultConfig() SiteConfig {
 	return SiteConfig{
-		Title:  "My Site",
-		Footer: "Generated statically via Go.",
-		Theme:  "default",
+		Title:   "Smolblog",
+		Footer:  "Built with Smolblog — a tiny Go + HTMX static site generator.",
+		Theme:   "default",
+		BaseURL: "",
 		AboutContent: `## About Me
 
 I'm a developer building things with Go, HTMX, and Tailwind CSS. This site is a static site generator I built from scratch.

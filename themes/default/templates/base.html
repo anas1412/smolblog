@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <title>{{.Title}} | {{siteName}}</title>
+    <base href="{{siteURL}}/">
     {{template "shared-head"}}
 </head>
 <body class="bg-white text-zinc-900 antialiased font-sans min-h-screen flex flex-col">
@@ -20,15 +21,15 @@
 {{define "navbar"}}
 <nav class="border-b border-zinc-100 bg-white/80 backdrop-blur sticky top-0 z-10">
     <div class="max-w-3xl mx-auto px-6 h-14 flex items-center gap-6">
-        <a href="/" class="font-bold tracking-tight text-lg text-zinc-900">{{siteName}}</a>
+        <a href="{{siteURL}}/" class="font-bold tracking-tight text-lg text-zinc-900">{{siteName}}</a>
         <div class="flex gap-5 ml-auto text-sm">
-            <a href="/"
+            <a href="{{siteURL}}/"
                class="transition{{if eq .Active "home"}} text-emerald-600 font-semibold{{else}} text-zinc-500 hover:text-zinc-900{{end}}">Home</a>
-            <a href="/blog/"
+            <a href="{{siteURL}}/blog/"
                class="transition{{if eq .Active "blog"}} text-emerald-600 font-semibold{{else}} text-zinc-500 hover:text-zinc-900{{end}}">Blog</a>
-            <a href="/about/"
+            <a href="{{siteURL}}/about/"
                class="transition{{if eq .Active "about"}} text-emerald-600 font-semibold{{else}} text-zinc-500 hover:text-zinc-900{{end}}">About</a>
-            <a href="/contact/"
+            <a href="{{siteURL}}/contact/"
                class="transition{{if eq .Active "contact"}} text-emerald-600 font-semibold{{else}} text-zinc-500 hover:text-zinc-900{{end}}">Contact</a>
         </div>
     </div>

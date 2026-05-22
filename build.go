@@ -97,6 +97,7 @@ func buildSite() error {
 	funcMap := template.FuncMap{
 		"siteName":   func() string { return cfg.Title },
 		"footerText": func() string { return cfg.Footer },
+		"siteURL":    func() string { return cfg.BaseURL },
 	}
 	baseTmpl, err := template.New("base.html").Funcs(funcMap).ParseFiles(
 		filepath.Join(tmplDir, "base.html"),
