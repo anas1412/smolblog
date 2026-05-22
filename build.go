@@ -94,10 +94,15 @@ func buildSite() error {
 	tmplDir := themeTemplatesPath(themeName)
 
 	// Parse shared base template with config-aware functions
+	// Base URL: env var SMOLBLOG_BASE_URL overrides config (for CI/CD)
+	baseURL := cfg.BaseURL
+	if envURL := os.Getenv("SMOLBLOG_BASE_URL"); envURL != "" {
+		baseURL = envURL
+	}
 	funcMap := template.FuncMap{
 		"siteName":   func() string { return cfg.Title },
 		"footerText": func() string { return cfg.Footer },
-		"siteURL":    func() string { return cfg.BaseURL },
+		"siteURL":    func() string { return baseURL },
 	}
 	baseTmpl, err := template.New("base.html").Funcs(funcMap).ParseFiles(
 		filepath.Join(tmplDir, "base.html"),

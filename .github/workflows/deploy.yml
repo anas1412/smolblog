@@ -32,6 +32,8 @@ jobs:
 
       - name: Generate static site
         run: ./smolblog build
+        env:
+          SMOLBLOG_BASE_URL: /smolblog
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
